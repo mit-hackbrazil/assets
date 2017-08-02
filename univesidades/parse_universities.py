@@ -1,26 +1,39 @@
-lines = open("enade.txt").readlines()
-NCOL = 23
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+lines = open("igc.txt").readlines()
+NCOL = 16
 COD_COL = 1
 NAME_COL = 2
 SIGLA_COL = 3
-GRADE_COL = NCOL - 1
+GRADE_COL = NCOL - 2
 
 class University:
 	def __init__(self, name, sigla):
 		self.name = name
 		self.grades = []
-		if sigla and sigla != "-":
+		if sigla and len(sigla) > 1:
 			self.sigla = sigla
 		else:
 			self.sigla = ""
 
 	def add_grade(self, grade):
+		try:
+			grade = float(grade)
+		except ValueError:
+			grade = 0
+
 		self.grades.append(grade)
 
 	def average_grade(self):
-		return sum(self.grades) / self.grades.len()
+		if self.grades:
+			return sum(self.grades) / len(self.grades)
+
+		return 0
 
 	def dropdown_name(self):
+		if self.sigla:
+			return "%s - %s" % (self.sigla, self.name)
+
 		return self.name
 
 	def __str__(self):
@@ -35,13 +48,15 @@ for l in lines:
 		u.add_grade(toks[i + GRADE_COL])
 		unis[key] = u
 
-name_set = {}
-for u in unis.values():
-	name_set[u.dropdown_name()] = True
+# add USP
 
+usp = University("UNIVERSIDADE DE SÃO PAULO", "USP");
+usp.add_grade(5)
+unis[0] = usp
+
+name_set = {}
 out = open("universidades.txt", "w")
-for n in sorted(name_set):
-	print n
-	out.write(str(n) + "\n")
+for u in sorted(unis.values(), key=lambda u: u.dropdown_name()):
+	out.write(u.dropdown_name() + "\n")
 
 
